@@ -1,0 +1,103 @@
+I-CREATION DES COMPTES :
+
+1-Ressource group:
+rg_Beach_sensor
+2-Compte de stockage source:
+sa_source_Beach_sensor
+3-Compte de stockage destination:
+sa_destination_Beach_sensor
+4-Container source:
+Sourcebeach
+Sourcelookup
+5-Container destination:
+DestinatioFoster
+DestinationOak
+6-Data factory (data fabrique):
+Df_Beach_sensor
+
+II-CREATION DES COMPOSANTES DE LA PIPLINE:
+
+1-Service liée:
+ls_source_beach
+ls_destination_Beach
+2-Service data set:
+ds_source_Beach 
+ds_station_lookup
+ds_destination_Foster
+ds_destination_Oak
+2-Data flow:
+DataflowBeach
+2.1-Source1
+SourceBeachSensor
+apres je detecte automatique et je m'assure qu,il m'affiche tout bien
+2.2-Filtre:
+Filtre2023Only
+Year == 2023
+2.3-Select1:
+SelectFields1
+je choisi et on chonge le nom de le Day en:
+reported_Day
+on supprime measurement id
+on change la Date MM/dd/yyyy
+2.4-Pivot:
+PivotTemp
+cle:
+{Station Name}
+valeur:
+Foster Weather Station
+Oak Street Weather Station
+grouper par :
+Station name
+reported_day
+Year
+colonne pivote:
+PivotAtemp
+MoyAtemp
+avg({Air Temperature})
+MinAtemp
+min({Air Temperature})
+MaxAtemp
+max({Air Temperature})
+2.5-Source2:
+SourceStation
+et je la lie avec sation name == station name
+2.6-Lookup rechercher:
+LookupStation:
+et je la lie avec sation name == station name
+2.7-Select2:
+SelectFields2
+je choisi mes colonnes pertinats
+
+2.8-Fractionnement conditionnel(connditioonel split):
+colonne a fractiooner:Station Name
+FosterStation =>{Station Name}=='Foster Weather Station'
+OakStreetStation=> rien puisque c'est un if
+2.9-select3:
+SelectFieldsFoster
+et j'enleve tous les colonnes null de Oak
+-trier sort:
+2.10-Sort:
+SortFosterStation
+Day Décroissant
+MOytempFoster Weather Station croissant
+2.11-select4:
+SelectFieldsOak
+et j'enleve tous les colonnes null de Foster
+2.12-Sort:
+SortOakStation
+
+Day Décroissant
+MOytempOak Street Weather Station croissant
+
+III-CREATION DES DISTINATIONS:
+
+2.13-Destination1:
+destinationFoster
+2.14-Destination2:
+destinationOak
+
+III-CREATION DE LA PIPLINE:
+1-Pipline:
+Pipline_beach_sensor
+et j'ajoute Data flow
+supprimer
